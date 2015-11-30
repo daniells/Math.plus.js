@@ -9,6 +9,7 @@
     Math.frandom(min, max)              |   Random float between min and max
     Math.mean(x1, x2, xn)               |   Math.mean([x1, x2, xn])
     Math.avg(x1, x2, xn)                |   same as mean()
+    Math.bound(lower, upper, val)       |   Returns the lower or upper bound if val is not between them
     Math.median(x1, x2, xn)             |   Math.median([x1, x2, xn])
     Math.mode(x1, x2, xn)               |   Math.mode(x1, x2, xn)
     Math.range(x1, x2, xn)              |   Math.range([x1, x2, xn])
@@ -225,8 +226,42 @@
             else return false;
         }
     });
+    /* Interesection of elements in sets */
+    Object.defineProperty(Math, 'intersect', {
+        value:function(){
+            if(arguments.length == 0) return false;
+            var intersections = [], values = [];
+            var findIn = function( test , storearr){
+                for(var x in test){
+                    if(x.constructor === Array) findIn(x);
+                    else if(x.constructor == Object){
+                        for(var k in x){
+                            if(x[k].constructor == Array) findIn(x[k]);
+                            else storearr.push(x);
+                        }
+                    else storearr.push(x);
+                    }
+                }
+            }
+            for(var x in arguments){
+                var storearr = []
+                if(x.constructor == Array) findIn(x, storearr);
+                if(x.constructor == Object) findIn(x, storearr);
+                else values.push(storearr);
+            }
+            
+            for(var x in storearr){
+                for(var y in storearr){
+                    for(var z in storearr){
+                        if(storearr)
+                            intersections.push(y);
+                    }
+                }
+            }
+            return intersections.length ? intersections : false;
+        }
+    });    
     /* Random integer between a min and max.  If no argument is given it returns a random decimal between 0 and 1.  */
-
     Object.defineProperty(Math, 'irandom', {
         value:function(min, max) {
             if(arguments.length === 0)
@@ -253,6 +288,12 @@
                     return Math.random() * (max - min) + min;
                 else throw("Math.frandom() accepts only Numbers.");
             }
+        }
+    });
+    /* Returns either 'upper' or 'lower' if 'val' is not between them.  Returns val if it is.  Thanks to jrobey */
+    Object.defineProperty(Math, 'bound', {
+        value: function(lower, upper, val) {
+            return Math.min(Math.max(lower, val), upper);
         }
     });
 })();
