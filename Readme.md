@@ -13,6 +13,20 @@ Returns the square of a number.
 
 Returns the cube of a number.
 
+### Percentages
+
+**Math.percentXofY(**_x_**,** _y_**)**
+    
+Returns X percent of Y.
+    
+**Math.percentWhatOfY(**_x_**,** _y_**)**
+
+Returns X is is what percent of Y ?
+    
+**Math.percentChangeFromXtoY(**_x_**,** _y_**)**
+
+What is the percentage increase/decrease from X to Y ?
+
 ### Set Stats
 
 **Math.avg(**_x1_**,** _x2_**,** _xn_**)**  
@@ -84,6 +98,14 @@ Returns the length of a line described by a set of xy coordinate points on a pla
 * cordinate components as arguments e.g. Math.lineLen(x1,y1,x2,y2,x3,y3)
 * coordinate components as elements in an array e.g. Math.lineLen([x1,y1,x2,y2,x3,y3])
 * coordinate components as an array of arrays e.g. Math.lineLen([[x1,y1],[x2,y2],[x3,y3]])
+
+
+### Misc
+**Math.isNumber(**x**)**  
+**Number.isNumber(**x**)**  
+
+If x is NaN or +/- Infinity returns false.  Otherwise returns true.
+
 
 
 ### Comming Attractions

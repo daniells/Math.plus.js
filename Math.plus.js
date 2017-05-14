@@ -1,8 +1,9 @@
 /*      
     Math.plus.js            (c) Daniel Swartzendruber 2015          MIT License           
 
-    A small library of Math addons that give the Math object extra methods
+    A small library of addons that give the Math object extra methods
 
+    Math.isNumber(x)                    |   Is input a number? Returns a boolean. (this method is also on the Number object)
     Math.squr(num)                      |   Square of num
     Math.cube(num)                      |   Cube of num
     Math.irandom(min, max)              |   Random integer between min and max
@@ -15,6 +16,9 @@
     Math.range(x1, x2, xn)              |   Math.range([x1, x2, xn])
     Math.rms(x1, x2, xn)                |   Math.rms([x1, x2, xn])  Returns root mean square
     Math.lineLen(x1,y1, x2,y2, xn,yn)   |   Math.lineLen([x1,y1,x2,y2,xn,yn])  |  [Math.lineLen([[x1,y1],[x2,y2],[xn,yn]])
+    Math.percentXofY(x, y)              |   What is X percent of Y ?
+    Math.percentWhatOfY(x, y)           |   X is is what percent of Y ?
+    Math.percentChangeFromXtoY(x, y)    |   What is the percentage increase/decrease from X to Y ?
 
     If there is a problem with arguments to these methods they return false.
 
@@ -24,25 +28,38 @@
 
     If Math.rrandom() or .irandom() is called with no arguments it behaves like the normal Math.random()
 
- */     
+ */
 
 (function(){
+    
+    // We use this to add properties to Math and Number objects.  Math.prototype is otherwise immutable.
+    var defProp = Object.defineProperty;
+
+
+    /* Determine if input is a number */
+    defProp(Math, 'isNumber', {
+        value:function(x){
+            return !isNaN(parseFloat(x)) && isFinite(x);
+        }
+    });
+    defProp(Number, 'isNumber', { value:Math.isNumber });
+
     /*  Square  */
-    Object.defineProperty(Math, 'sqr', {
+    defProp(Math, 'sqr', {
         value:function(x){
             if(x.constructor === Number) return Math.pow(x,2);
             else return false;
         }
     });
     /*  Cube  */
-    Object.defineProperty(Math, 'cube', {
+    defProp(Math, 'cube', {
         value:function(x){
             if(x.constructor === Number) return Math.pow(x,3);
             else return false;
         }
     });
     /*  Average / Mean  */
-    Object.defineProperty(Math, 'mean', {
+    defProp(Math, 'mean', {
         value:function(){
             if(arguments[0].constructor === Number){    
                 var sum = 0, reals = Array.prototype.slice.call(arguments).filter(function(elem){return elem.constructor === Number;});    
@@ -67,9 +84,9 @@
         }
     });
     /* the same as above */
-    Object.defineProperty(Math, 'avg', {value: Math.mean});
+    defProp(Math, 'avg', {value: Math.mean});
     /* Median */
-    Object.defineProperty(Math, 'median', {
+    defProp(Math, 'median', {
         value:function(){
             if(arguments[0].constructor === Number){ 
                 reals = Array.prototype.slice.call(arguments).filter(function(elem){return elem.constructor === Number;}).sort(function(a, b) {return a - b;});
@@ -94,7 +111,7 @@
         }
     }); 
     /* mode() Returns null if a set has no mode.  Null is falsy, but null !== false so you can distinguish the difference. */
-    Object.defineProperty(Math, 'mode', {
+    defProp(Math, 'mode', {
         value:function(){
             if(arguments[0].constructor === Number){ 
                 var reals = Array.prototype.slice.call(arguments).filter(function(elem){return elem.constructor === Number;});
@@ -134,7 +151,7 @@
         }
     }); 
     /* Range */
-    Object.defineProperty(Math, 'range', {
+    defProp(Math, 'range', {
         value:function(){
             if(arguments[0].constructor === Number){ 
                 reals = Array.prototype.slice.call(arguments).filter(function(elem){return elem.constructor === Number;}).sort(function(a, b) {return a - b;});
@@ -153,7 +170,7 @@
         }
     }); 
     /* Root Mean Square */
-    Object.defineProperty(Math, 'rms', {
+    defProp(Math, 'rms', {
         value:function(){
             if(arguments[0].constructor === Number){    
                 var squaresum = 0, reals = Array.prototype.slice.call(arguments).filter(function(elem){return elem.constructor === Number;});    
@@ -183,7 +200,7 @@
         }
     }); 
     /* Length of a line segment or polyline */
-    Object.defineProperty(Math, 'lineLen', {
+    defProp(Math, 'lineLen', {
         value:function(){
             if(arguments[0].constructor === Number){
                 var reals = Array.prototype.slice.call(arguments).filter(function(elem){return elem.constructor === Number;});  
@@ -227,7 +244,7 @@
         }
     });
     /* Interesection of elements in sets */
-    Object.defineProperty(Math, 'intersect', {
+    defProp(Math, 'intersect', {
         value:function(){
             if(arguments.length == 0) return false;
             var intersections = [], values = [];
@@ -239,8 +256,8 @@
                             if(x[k].constructor == Array) findIn(x[k]);
                             else storearr.push(x);
                         }
-                    else storearr.push(x);
                     }
+                    else storearr.push(x);
                 }
             }
             for(var x in arguments){
@@ -249,7 +266,6 @@
                 if(x.constructor == Object) findIn(x, storearr);
                 else values.push(storearr);
             }
-            
             for(var x in storearr){
                 for(var y in storearr){
                     for(var z in storearr){
@@ -262,7 +278,7 @@
         }
     });    
     /* Random integer between a min and max.  If no argument is given it returns a random decimal between 0 and 1.  */
-    Object.defineProperty(Math, 'irandom', {
+    defProp(Math, 'irandom', {
         value:function(min, max) {
             if(arguments.length === 0)
                 return Math.random();
@@ -274,7 +290,7 @@
         }
     });
     /* Random float between a min and max.  If no argument it returns a random decimal between 0 and 1. */
-    Object.defineProperty(Math, 'frandom', {
+    defProp(Math, 'frandom', {
         value:function(min, max) {
             if(arguments.length === 0) return Math.random();
             if(arguments.length == 1){
@@ -290,11 +306,30 @@
             }
         }
     });
-    /* Returns either 'upper' or 'lower' if 'val' is not between them.  Returns val if it is.  Thanks to jrobey */
-    Object.defineProperty(Math, 'bound', {
+    /* Returns either 'upper' or 'lower' if 'val' is not between them.  Returns val if it is.  Thanks to James Robey */
+    defProp(Math, 'bound', {
         value: function(lower, upper, val) {
             return Math.min(Math.max(lower, val), upper);
         }
     });
+    
+    /* What is X percent of Y ? */
+    defProp(Math, 'percentXofY', {
+        value: function(x,y) {
+            return x / 100 * y;
+        }
+    });  
+    /* X is is what percent of Y ? */
+    defProp(Math, 'percentWhatOfY', {
+        value: function(x, y) {
+            return x / y * 100;
+        }
+    });  
+    /* What is the percentage increase/decrease from X to Y ? */
+    defProp(Math, 'percentChangeFromXtoY', {
+        value: function(x, y) {
+            return (y - x) / x * 100;
+        }
+    });  
 })();
 
